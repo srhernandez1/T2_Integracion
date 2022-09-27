@@ -65,10 +65,10 @@ async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
-@app.get("/airports/{airport_id}",response_model = List[Airport])
+@app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
-    return await database.fetch_all(query)
+    return await database.fetch_one(query)
 
 @app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):

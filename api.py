@@ -65,7 +65,7 @@ async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
-@app.get("/airports/{airport_id}", Airport)
+@app.get("/airports/{airport_id}", response_model = Airport)
 async def get_airports(airport_id):
     query = "SELECT * FROM airports WHERE id = :id"
     return await database.fetch_one(query=query,values={"id":airport_id})

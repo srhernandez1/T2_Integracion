@@ -65,6 +65,11 @@ async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
+@app.get("/airports/{airport_id}",response_model = List[Airport])
+async def get_airports(airport_id):
+    query = sqlalchemy.select(airports).where(airports.id == airport_id)
+    return await database.fetch_one(query)
+
 @app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
@@ -76,7 +81,7 @@ async def create_flight(flight: Flight):
     query = flights.insert().values(id = flight.id,departure = flight.departure, destination = flight.destination)
     last_id = await database.execute(query)
     return Flight(id = flight.id,departure = flight.departure, destination = flight.destination)
-    #Creo q tiene q ver más con el return, por q si estoy agregando las filas
+
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):
 #     return students[student_id]

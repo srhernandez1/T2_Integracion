@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Path
-from typing import Optional
+from typing import Optional,List
 from pydantic import BaseModel,BaseConfig
 import databases
 import sqlalchemy
@@ -60,12 +60,12 @@ async def startup():
 def index():
     return {"name": "First Data"}
 
-@app.get("/airports/")
+@app.get("/airports/",response_model = List[Airport])
 async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
-@app.post("/airports/")
+@app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)

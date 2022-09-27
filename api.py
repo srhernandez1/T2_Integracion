@@ -52,11 +52,16 @@ class Flight(BaseModel):
 def index():
     return {"name": "First Data"}
 
-# @app.get("/get-airports/")
-# async def get_airports():
-#     query = "SELECT * FROM airports"
-#     return await database.fetch_all(query = query)
+@app.get("/airports/")
+async def get_airports():
+    query = "SELECT * FROM airports"
+    return await database.fetch_all(query = query)
 
+@app.post("/airports/")
+async def get_airports(airport: Airport):
+    query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
+    last_id = await database.execute(query)
+    return {**airport.dict(),"id":last_id}
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):
 #     return students[student_id]

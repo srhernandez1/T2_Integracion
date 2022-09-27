@@ -41,7 +41,7 @@ class Airport(BaseModel):
     name: str
     country: str
     city: str
-    position: JSON
+    position: dict
 
 class Flight(BaseModel):
     id: str

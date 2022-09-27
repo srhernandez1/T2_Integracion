@@ -62,7 +62,7 @@ def index():
 
 @app.get("/airports/",response_model = List[Airport])
 async def get_airports():
-    query = airports.select()
+    query = "SELECT * FROM airports"
     return await database.fetch_all(query)
 
 @app.post("/airports/",response_model = Airport)
@@ -75,7 +75,8 @@ async def create_airports(airport: Airport):
 async def create_flight(flight: Flight):
     query = flights.insert().values(id = flight.id,departure = flight.departure, destination = flight.destination)
     last_id = await database.execute(query)
-    return {**flight.dict(),"id":last_id}
+    return {"id":last_id}
+    #Creo q tiene q ver más con el return, por q si estoy agregando las weas
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):
 #     return students[student_id]

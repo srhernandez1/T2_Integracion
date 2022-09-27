@@ -72,7 +72,7 @@ async def create_airports(airport: Airport):
     return {**airport.dict(),"id":last_id}
 
 @app.post("/flights/",response_model = Flight)
-async def create_airports(flight: Flight):
+async def create_flight(flight: Flight):
     query = flights.insert().values(id = flight.id,departure = flight.departure, destination = flight.destination)
     last_id = await database.execute(query)
     return {**flight.dict(),"id":last_id}

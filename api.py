@@ -68,7 +68,8 @@ async def get_airports():
 @app.get("/airports/{airport_id}", response_model = Airport)
 async def get_airports(airport_id):
     query = "SELECT * FROM airports WHERE id = :id"
-    return await database.fetch_one(query=query,values={"id":airport_id})
+    temp = database.fetch_one(query=query,values={"id":airport_id})
+    return await Airport(id = temp.id,name = temp.name,country = temp.country,city = temp.city, position = temp.position)
 
 @app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):

@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Path
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel,BaseConfig
 import databases
 import sqlalchemy
 from sqlalchemy.dialects.postgresql import JSON
 
-database_url = "postgres://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
+BaseConfig.arbitrary_types_allowed = True  # change #1
+
+database_url = "postgresql://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
 database = databases.Database(database_url)
 metadata = sqlalchemy.MetaData()
 
@@ -16,7 +18,7 @@ airports = sqlalchemy.Table(
     sqlalchemy.Column("name",sqlalchemy.String),
     sqlalchemy.Column("country",sqlalchemy.String),
     sqlalchemy.Column("city",sqlalchemy.String),
-    sqlalchemy.Column("position",JSON),
+    sqlalchemy.Column("position",sqlalchemy.JSON),
 )
 
 flights = sqlalchemy.Table(
@@ -50,10 +52,10 @@ class Flight(BaseModel):
 def index():
     return {"name": "First Data"}
 
-@app.get("/get-airports/")
-async def get_airports():
-    query = "SELECT * FROM airports"
-    return await database.fetch_all(query = query)
+# @app.get("/get-airports/")
+# async def get_airports():
+#     query = "SELECT * FROM airports"
+#     return await database.fetch_all(query = query)
 
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):

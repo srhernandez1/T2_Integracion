@@ -48,17 +48,13 @@ class Flight(BaseModel):
     destination: str
 
 @app.on_event("startup")
-async def startup() -> None:
-    database_ = app.state.database
-    if not database_.is_connected:
-        await database_.connect()
+async def startup():
+    await database.connect()
 
 
 @app.on_event("shutdown")
-async def shutdown() -> None:
-    database_ = app.state.database
-    if database_.is_connected:
-        await database_.disconnect()
+async def startup():
+    await database.disconnect()
 
 @app.get("/")
 def index():
@@ -70,7 +66,7 @@ async def get_airports():
     return await database.fetch_all(query)
 
 @app.post("/airports/")
-async def get_airports(airport: Airport):
+async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return {**airport.dict(),"id":last_id}

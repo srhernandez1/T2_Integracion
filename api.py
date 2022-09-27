@@ -1,4 +1,3 @@
-from unittest import result
 from fastapi import FastAPI, Path
 from typing import Optional,List
 from pydantic import BaseModel,BaseConfig
@@ -66,11 +65,10 @@ async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
-@app.get("/airports/{airport_id}",response_model = Airport)
+@app.get("/airports/{airport_id}",response_model = List[Airport])
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
-    res = await database.fetch_one(query)
-    return Airport(id = res.id,name = res.name,country = res.country,city = res.city, position = res.position)
+    return await database.fetch_all(query)
 
 @app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):

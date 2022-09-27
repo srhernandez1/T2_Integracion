@@ -6,7 +6,7 @@ import sqlalchemy
 
 BaseConfig.arbitrary_types_allowed = True  # change #1
 
-database_url = "postgres://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
+database_url = "postgresql://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
 database = databases.Database(database_url)
 metadata = sqlalchemy.MetaData()
 
@@ -46,13 +46,6 @@ class Flight(BaseModel):
     id: str
     departure: str
     destination: str
-
-@app.on_event("startup")
-async def startup():
-    await database.connect()
-@app.on_event("shutdown")
-async def shutdown():
-    await database.disconnect()
 
 @app.get("/")
 def index():

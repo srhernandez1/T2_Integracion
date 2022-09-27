@@ -53,8 +53,8 @@ def index():
 
 @app.get("/airports/")
 async def get_airports():
-    query = "SELECT * FROM airports"
-    return await database.fetch_all(query = query)
+    query = airports.select()
+    return await database.fetch_all(query)
 
 @app.post("/airports/")
 async def get_airports(airport: Airport):

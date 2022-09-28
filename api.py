@@ -121,8 +121,16 @@ async def get_airports(flight_id):
 
 
 @app.post("/airports",response_model = Airport,status_code = 201)
-async def create_airports(airport: Airport):
+async def create_airports(airport: dict):
     for field in airport.__fields__:
+        if not isinstance(getattr(airport,field),str) and field != "position":
+            return JSONResponse(
+            status_code=400,
+        )
+        if not isinstance(getattr(airport,field),dict) and field == "position":
+            return JSONResponse(
+            status_code=400,
+        )
         if getattr(airport,field) == None:
             return JSONResponse(
             status_code=400,

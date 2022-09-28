@@ -206,7 +206,7 @@ async def create_flight(flight: Flight_inp):
     destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,
     position = {"lat":dic_dep["lat"],"long":dic_dep["long"]})
 
-@app.post("/airports/{airport_id}",response_model = Airport)
+@app.put("/airports/{airport_id}",response_model = Airport)
 async def edit_airport(airport_id,nombre):
     conn = engine.connect()
     stmt = airports.update().values(name = nombre).where(airports.c.id == airport_id)

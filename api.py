@@ -2,7 +2,7 @@ from fastapi import FastAPI, Path, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from typing import Optional,List,Union
-from pydantic import BaseModel,BaseConfig
+from pydantic import BaseModel,BaseConfig, validator
 import databases
 import sqlalchemy
 import requests
@@ -50,6 +50,12 @@ class Airport(BaseModel):
     country: Union[str,None] = None
     city: Union[str,None] = None
     position: Union[dict,None] = None
+
+    @validator('name')
+    def name_must_str(cls, v):
+        if not isinstance(v,str):
+            raise ValueError('Debe ser un string')
+        return v.title()
 
 class Flight_inp(BaseModel):
     id: Union[str,None] = None

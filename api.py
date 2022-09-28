@@ -101,7 +101,7 @@ async def create_flight(flight: Flight_inp):
     des = await database.fetch_one(query_des)
     dic_dep = json.load(dep)
     dic_des = json.load(des)
-    print(dic_dep["lat"],type(dic_dep["lat"]))
+    print(dic_dep)
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])
     response = requests.get(link)
     dic = json.load(response)

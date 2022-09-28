@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, HTTPException
 from fastapi.responses import JSONResponse
 from typing import Optional,List,Union
 from pydantic import BaseModel,BaseConfig
@@ -100,6 +100,8 @@ async def get_airports(airport_id):
 
 @app.post("/airports",response_model = List[Airport])
 async def create_airports(airport: Airport):
+    if airport.name == None:
+        raise HTTPException(status_code=400, detail="Falto el name")
     print("El nombre es ",airport.name)
     #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     #last_id = await database.execute(query)

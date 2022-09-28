@@ -70,8 +70,8 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.post("/items/", status_code=204)
-async def create_item():
+@app.post("/status", status_code=204)
+async def get_status():
     return {"name": "204"}
 
 @app.delete("/data")

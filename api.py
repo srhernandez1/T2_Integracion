@@ -71,10 +71,12 @@ async def startup():
 async def startup():
     await database.disconnect()
 
+@app.get("/")
+async def index():
+    return {"Bienvenido":"T2"}
 @app.get("/",status_code = 204)
 async def create_item():
     return {"name": "204"}
-
 @app.delete("/data")
 async def delete_db():
     database.execute(airports.delete())

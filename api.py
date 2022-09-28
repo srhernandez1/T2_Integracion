@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, JSONResponse
+from fastapi import FastAPI, Path
 from typing import Optional,List
 from pydantic import BaseModel,BaseConfig
 import databases
@@ -70,9 +70,9 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.get("status")
-async def status():
-    return JSONResponse(status_code=204)
+@app.post("/items/", status_code=204)
+async def create_item(name: str):
+    return {"name": name}
 
 @app.delete("/data")
 async def delete_db():

@@ -53,7 +53,7 @@ class Airport(BaseModel):
 
     @validator('name')
     def name_must_str(cls, v):
-        if not isinstance(v,str):
+        if "{" in v:
             raise ValueError('Debe ser un string')
         return v.title()
 

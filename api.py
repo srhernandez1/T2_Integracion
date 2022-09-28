@@ -99,7 +99,7 @@ async def create_flight(flight: Flight_inp):
     dep = await database.fetch_one(query_dep)
     query_des = sqlalchemy.select(airports).where(airports.c.id == flight.destination)
     des = await database.fetch_one(query_des)
-    print(des.position)
+    print(type(des.position))
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dep.position["lat"],dep.position["long"],des.position["lat"],des.position["long"])
     response = requests.get(link)
     dic = json.load(response)

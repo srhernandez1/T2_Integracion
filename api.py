@@ -70,6 +70,10 @@ async def startup():
 async def startup():
     await database.disconnect()
 
+@app.post("/status/", status_code=201)
+async def create_item(name: str):
+    return {"name": name}
+
 @app.get("/")
 def index():
     return {"name": "First Data"}

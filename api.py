@@ -103,7 +103,10 @@ async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
             raise HTTPException(status_code=400, detail="Missing parameter: "+field)
-    print("El nombre es ",airport.name)
+    query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
+    err = await database.fetch_one(query_err)
+    dic_err = json.loads(err)
+    print(dic_err)
     #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     #last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)

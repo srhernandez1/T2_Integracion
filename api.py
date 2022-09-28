@@ -48,11 +48,11 @@ class Input(BaseModel):
     jeison:str
 
 class Airport(BaseModel):
-    id: str
-    name: str
-    country: str
-    city: str
-    position: dict
+    id: Optional[str]
+    name: Optional[str]
+    country: Optional[str]
+    city: Optional[str]
+    position: Optional[dict]
 
 class Flight_inp(BaseModel):
     id: Union[str,None] = None
@@ -123,8 +123,9 @@ async def get_airports(flight_id):
     return await database.fetch_one(query)
 
 
-@app.post("/airports",response_model = Airport,status_code = 201)
+@app.post("/airports",response_model = List[Airport],status_code = 201)
 async def create_airports(airport: Airport):
+    print(airport.name)
     # for field in airport.__fields__:
     #     if getattr(airport,field) == None:
     #         return JSONResponse(

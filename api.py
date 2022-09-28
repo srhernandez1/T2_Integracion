@@ -105,7 +105,8 @@ async def create_airports(airport: Airport):
             raise HTTPException(status_code=400, detail="Missing parameter: "+field)
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)
-    print(err.id)
+    if err !=None and err.id == airport.id:
+        raise HTTPException(status_code=409, detail="Airport with id "+str(err.id)+" already exists")
     #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     #last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)

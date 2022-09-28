@@ -73,7 +73,7 @@ async def startup():
 
 @app.get("/")
 async def index():
-    return {}
+    return JSONResponse(code_status = 204)
 
 @app.delete("/data")
 async def delete_db():

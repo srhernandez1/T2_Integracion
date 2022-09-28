@@ -79,8 +79,8 @@ async def get_status():
     return {"name": "204"}
 @app.delete("/data")
 async def delete_db():
-    database.execute(airports.delete())
-    database.execute(flights.delete())
+    airports.delete()
+    flights.delete()
     return
 
 #Manejar errores y hacer las weas q faltan.
@@ -98,7 +98,7 @@ async def get_airports(airport_id):
     return await database.fetch_one(query)
 
 
-@app.post("/airports",response_model = Airport)
+@app.post("/airports",response_model = Airport,status_code = 201)
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:

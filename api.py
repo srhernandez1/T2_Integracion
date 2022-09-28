@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Path, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from typing import Optional,List,Union
 from pydantic import BaseModel,BaseConfig
 import databases
@@ -123,9 +124,9 @@ async def get_airports(flight_id):
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
-            raise JSONResponse(
+            return JSONResponse(
             status_code=400,
-            content={"error":"Missing field "+field},
+            content=jsonable_encoder({"error":"Missing parameter "+field}),
         )
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)

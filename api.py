@@ -2,7 +2,7 @@ from fastapi import FastAPI, Path, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from typing import Optional,List,Union
-from pydantic import BaseModel,BaseConfig, validator
+from pydantic import BaseModel,BaseConfig
 import databases
 import sqlalchemy
 import requests
@@ -44,18 +44,15 @@ metadata.create_all(engine)
 
 app = FastAPI()
 
+class Inputt(BaseModel):
+    jeison:str
+
 class Airport(BaseModel):
     id: Union[str,None] = None
     name: Union[str,None] = None
     country: Union[str,None] = None
     city: Union[str,None] = None
     position: Union[dict,None] = None
-
-    @validator('name')
-    def name_must_str(cls, v):
-        if "{" in v:
-            raise ValueError('Debe ser un string')
-        return v.title()
 
 class Flight_inp(BaseModel):
     id: Union[str,None] = None
@@ -110,7 +107,7 @@ async def get_airports(airport_id):
     if err ==None:
         return JSONResponse(
             status_code=404,
-            content="Airport with id "+str(airport_id)+" not found",
+            content=jsonable_encoder({"error":"Airport with id "+str(airport_id)+" not found"}),
         )
     return await database.fetch_one(query)
 @app.get("/flights/{flight_id}",response_model = Flight)
@@ -121,13 +118,15 @@ async def get_airports(flight_id):
     if err == None:
         return JSONResponse(
             status_code=404,
-            content="Flight with id "+str(flight_id)+" not found",
+            content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
         )
     return await database.fetch_one(query)
 
 
 @app.post("/airports",response_model = Airport,status_code = 201)
-async def create_airports(airport: Airport):
+async def create_airports(airport_i: Inputt):
+    argum = json.loads(airport_i)
+    print(argum)
     for field in airport.__fields__:
         if getattr(airport,field) == None:
             return JSONResponse(
@@ -139,7 +138,7 @@ async def create_airports(airport: Airport):
     if err !=None and err.id == airport.id:
         return JSONResponse(
             status_code=409,
-            content={"error":"Airport with id "+str(err.id)+" already exists"},
+            content=jsonable_encoder({"error":"Airport with id "+str(err.id)+" already exists"}),
         )
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
@@ -150,14 +149,14 @@ async def create_flight(flight: Flight_inp):
         if getattr(flight,field) == None:
             return JSONResponse(
             status_code=400,
-            content={"error":"Missing field "+field},
+            content=jsonable_encoder({"error":"Missing field "+field}),
         )
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight.id)
     err = await database.fetch_one(query_err)
     if err !=None and err.id == flight.id:
         return JSONResponse(
             status_code=409,
-            content={"error":"Flight with id "+str(err.id)+" already exists"},
+            content=jsonable_encoder({"error":"Flight with id "+str(err.id)+" already exists"}),
         )
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)
     dep = await database.fetch_one(query_dep)
@@ -166,12 +165,12 @@ async def create_flight(flight: Flight_inp):
     if dep == None:
         return JSONResponse(
             status_code=404,
-            content={"error":"Airport with id "+str(flight.departure)+" does not exist"},
+            content=jsonable_encoder({"error":"Airport with id "+str(flight.departure)+" does not exist"}),
         )
     if des == None:
         return JSONResponse(
             status_code=404,
-            content={"error":"Airport with id "+str(flight.destination)+" does not exist"},
+            content=jsonable_encoder({"error":"Airport with id "+str(flight.destination)+" does not exist"}),
         )
     dic_dep=json.loads(dep.position)
     dic_des=json.loads(des.position)

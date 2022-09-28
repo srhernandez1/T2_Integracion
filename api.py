@@ -107,11 +107,13 @@ async def create_flight(flight: Flight_inp):
     dic = response.json()
     
     query = flights.insert().values(id = flight.id,departure = {"id":dep.id,"name":dep.name},
-    destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0)
+    destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,
+    position = {"lat":dic_dep["lat"],"long":dic_dep["long"]})
 
     last_id = await database.execute(query)
     return Flight(id = flight.id,departure = {"id":dep.id,"name":dep.name},
-    destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0)
+    destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,
+    position = {"lat":dic_dep["lat"],"long":dic_dep["long"]})
 
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):

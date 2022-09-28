@@ -71,7 +71,7 @@ async def startup():
     await database.disconnect()
 
 @app.post("/items/", status_code=204)
-async def create_item(name: str):
+async def create_item():
     return {"name": "204"}
 
 @app.delete("/data")

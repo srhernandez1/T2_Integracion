@@ -48,7 +48,7 @@ class Input(BaseModel):
     jeison:str
 
 class Airport(BaseModel):
-    id: Optional[str]
+    id: str
     name: Optional[str]
     country: Optional[str]
     city: Optional[str]

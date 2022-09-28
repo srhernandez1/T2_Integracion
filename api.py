@@ -71,8 +71,6 @@ async def startup():
     await database.disconnect()
 
 @app.get("/status")
-async def status():
-    return
 
 @app.delete("/data")
 async def delete_db():

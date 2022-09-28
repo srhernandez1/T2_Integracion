@@ -85,7 +85,7 @@ async def get_flights():
 @app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
-    prueba = database.fetch_one(query)
+    prueba = await database.fetch_one(query)
     print(prueba.id,"HOLAAAAAAAAAAA")
     return await database.fetch_one(query)
 

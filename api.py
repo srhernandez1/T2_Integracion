@@ -79,8 +79,8 @@ async def get_status():
     return {"name": "204"}
 @app.delete("/data")
 async def delete_db():
-    database.execute(airports.delete())
-    database.execute(flights.delete())
+    airports.drop(engine)
+    flights.drop(engine)
     return
 
 #Manejar errores y hacer las weas q faltan.
@@ -98,11 +98,11 @@ async def get_airports(airport_id):
     return await database.fetch_one(query)
 
 
-@app.post("/airports",response_model = Airport,status_code=201)
+@app.post("/airports",response_model = Airport)
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
-            raise HTTPException(status_code=400, detail="Missing field "+field)
+            raise HTTPException(status_code=400, detail="Missing parameter: "+field)
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)
     if err !=None and err.id == airport.id:

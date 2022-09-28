@@ -85,8 +85,6 @@ async def get_flights():
 @app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
-    prueba = await database.fetch_one(query)
-    print(prueba.id,"HOLAAAAAAAAAAA")
     return await database.fetch_one(query)
 
 
@@ -97,10 +95,12 @@ async def create_airports(airport: Airport):
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
 @app.post("/flights/",response_model = Flight)
 async def create_flight(flight: Flight_inp):
+    print("El departure es "+str(flight.departure))
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)
     dep = await database.fetch_one(query_dep)
     query_des = sqlalchemy.select(airports).where(airports.c.id == flight.destination)
     des = await database.fetch_one(query_des)
+    print(dep.id,"HOLAAAAAAAAAAA")
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])
     response = requests.get(link)
     dic = json.load(response)

@@ -70,13 +70,15 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.post("/status")
+@app.get("/status")
+async def status():
+    return
 
 @app.delete("/data")
 async def delete_db():
     database.execute(airports.delete())
     database.execute(flights.delete())
-
+    return {}
 
 
 @app.get("/airports",response_model = List[Airport])

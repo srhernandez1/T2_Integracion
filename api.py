@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Path
 from fastapi.responses import JSONResponse
-from typing import Optional,List
+from typing import Optional,List,Union
 from pydantic import BaseModel,BaseConfig
 import databases
 import sqlalchemy
@@ -44,11 +44,11 @@ metadata.create_all(engine)
 app = FastAPI()
 
 class Airport(BaseModel):
-    id: str
-    name: str
-    country: str
-    city: str
-    position: dict
+    id: Union[str,None] = None
+    name: Union[str,None] = None
+    country: Union[str,None] = None
+    city: Union[str,None] = None
+    position: Union[dict,None] = None
 
 class Flight_inp(BaseModel):
     id: str
@@ -99,11 +99,10 @@ async def get_airports(airport_id):
 
 
 @app.post("/airports",response_model = List[Airport])
-async def create_airports(airport):
-    print("El objeto es: "+airport)
+async def create_airports(airport: Airport):
     print("El nombre es ",airport.name)
-    query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
-    last_id = await database.execute(query)
+    #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
+    #last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
 @app.post("/flights",response_model = Flight)
 async def create_flight(flight: Flight_inp):

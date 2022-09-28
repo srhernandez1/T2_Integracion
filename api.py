@@ -130,7 +130,7 @@ async def get_airports(flight_id):
 @app.post("/airports",response_model = List[Airport],status_code = 201)
 async def create_airports(airport: Airport_in):
     for field in airport.__fields__:
-        if not isinstance(getattr(airport,field)) and field!="position":
+        if not isinstance(getattr(airport,field),str) and field!="position":
             return JSONResponse(
             status_code=455,
             content=jsonable_encoder({"error":"Missing parameter "+field}),

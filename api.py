@@ -11,7 +11,7 @@ import json
 
 BaseConfig.arbitrary_types_allowed = True  # change #1
 
-database_url = "postgresql://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
+database_url = "postgresql://wkgvjaocsllfnd:c334971c4fe42edcbd5f83f9cf7f9dd1f802c135787caf4aa13a3258386bfa77@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d9ba30nouerlcg"
 database = databases.Database(database_url)
 metadata = sqlalchemy.MetaData()
 

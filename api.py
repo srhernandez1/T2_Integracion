@@ -101,7 +101,7 @@ async def get_airports(airport_id):
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport_id)
     err = await database.fetch_one(query_err)
     if err ==None:
-        raise HTTPException(status_code=404, detail="Airport with id "+str(airport_id)+" not found")
+        raise HTTPException(status_code=404, error="Airport with id "+str(airport_id)+" not found")
     return await database.fetch_one(query)
 @app.get("/flights/{flight_id}",response_model = Flight)
 async def get_airports(flight_id):
@@ -109,7 +109,7 @@ async def get_airports(flight_id):
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     err = await database.fetch_one(query_err)
     if err ==None:
-        raise HTTPException(status_code=404, detail="Flight with id "+str(flight_id)+" not found")
+        raise HTTPException(status_code=404, error="Flight with id "+str(flight_id)+" not found")
     return await database.fetch_one(query)
 
 
@@ -117,11 +117,11 @@ async def get_airports(flight_id):
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
-            raise HTTPException(status_code=400, detail="Missing parameter: "+field)
+            raise HTTPException(status_code=400, error="Missing parameter: "+field)
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)
     if err !=None and err.id == airport.id:
-        raise HTTPException(status_code=409, detail="Airport with id "+str(err.id)+" already exists")
+        raise HTTPException(status_code=409, error="Airport with id "+str(err.id)+" already exists")
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)

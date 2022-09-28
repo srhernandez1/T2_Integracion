@@ -127,7 +127,7 @@ async def get_airports(flight_id):
         )
     return await database.fetch_one(query)
 
-
+ 
 @app.post("/airports",response_model = List[Airport],status_code = 201)
 async def create_airports(airport: Airport):
     for field in airport.__fields__:

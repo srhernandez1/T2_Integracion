@@ -101,9 +101,8 @@ async def get_airports(airport_id):
 @app.post("/airports",response_model = List[Airport])
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
-        print(getattr(airport,field))
-    if airport.name == None:
-        raise HTTPException(status_code=400, detail="Falto el name")
+        if getattr(airport,field) == None:
+            raise HTTPException(status_code=400, detail="Missing parameter: "+field)
     print("El nombre es ",airport.name)
     #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     #last_id = await database.execute(query)

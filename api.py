@@ -130,6 +130,11 @@ async def get_airports(flight_id):
 @app.post("/airports",response_model = List[Airport],status_code = 201)
 async def create_airports(airport: Airport_in):
     for field in airport.__fields__:
+        if getattr(airport,field) == None:
+            return JSONResponse(
+            status_code=400,
+            content=jsonable_encoder({"error":"Missing parameter "+field}),
+        )
         if not isinstance(getattr(airport,field),str) and field!="position":
             return JSONResponse(
             status_code=400,
@@ -139,11 +144,6 @@ async def create_airports(airport: Airport_in):
             return JSONResponse(
             status_code=400,
             content=jsonable_encoder({"error":"Wrong parameters"}),
-        )
-        if getattr(airport,field) == None:
-            return JSONResponse(
-            status_code=400,
-            content=jsonable_encoder({"error":"Missing parameter "+field}),
         )
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)

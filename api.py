@@ -123,7 +123,7 @@ async def get_airports(flight_id):
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
-            return JSONResponse(
+            raise JSONResponse(
             status_code=400,
             content={"error":"Missing field "+field},
         )
@@ -156,6 +156,16 @@ async def create_flight(flight: Flight_inp):
     dep = await database.fetch_one(query_dep)
     query_des = sqlalchemy.select(airports).where(airports.c.id == flight.destination)
     des = await database.fetch_one(query_des)
+    if dep == None:
+        return JSONResponse(
+            status_code=404,
+            content={"error":"Airport with id "+str(flight.departure)+" does not exist"},
+        )
+    if des == None:
+        return JSONResponse(
+            status_code=404,
+            content={"error":"Airport with id "+str(flight.destination)+" does not exist"},
+        )
     dic_dep=json.loads(dep.position)
     dic_des=json.loads(des.position)
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])

@@ -142,7 +142,7 @@ async def create_airports(airport: Airport):
     if not check_pos:
         return JSONResponse(
             status_code=400,
-            content=jsonable_encoder({"Invalid type of field position, got <class 'list'> expecting <class 'dict'>"}),
+            content=jsonable_encoder({"error":"Invalid type of field position, got <class 'list'> expecting <class 'dict'>"}),
         )
     if not (-90<=check_pos["lat"]<=90):
         return JSONResponse(

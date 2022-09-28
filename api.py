@@ -72,7 +72,7 @@ async def startup():
 
 @app.post("/items/", status_code=204)
 async def create_item(name: str):
-    return {"name": name}
+    return {"name": "204"}
 
 @app.delete("/data")
 async def delete_db():

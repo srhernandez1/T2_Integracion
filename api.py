@@ -206,45 +206,8 @@ async def create_flight(flight: Flight_inp):
     destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,
     position = {"lat":dic_dep["lat"],"long":dic_dep["long"]})
 
-# @app.get("/get-airport/{airport_id}")
-# def get_airport(airport_id):
-#     return students[student_id]
-
-# @app.get("/get-by-name/{student_id}")
-# def get_student(*, student_id: int, name: Optional[str] = None, test : int):
-#     for student_id in students:
-#         if students[student_id]["name"] == name:
-#             return students[student_id]
-#     return {"Data": "Not found"}
-
-# @app.post("/create-student/{student_id}")
-# def create_student(student_id : int, student : Student):
-#     if student_id in students:
-#         return {"Error": "Student exists"}
-
-#     students[student_id] = student
-#     return students[student_id]
-
-# @app.put("/update-student/{student_id}")
-# def update_student(student_id: int, student: UpdateStudent):
-#     if student_id not in students:
-#         return {"Error": "Student does not exist"}
-
-#     if student.name != None:
-#         students[student_id].name = student.name
-
-#     if student.age != None:
-#         students[student_id].age = student.age
-
-#     if student.year != None:
-#         students[student_id].year = student.year
-
-#     return students[student_id]
-
-# @app.delete("/delete-student/{student_id}")
-# def delete_student(student_id: int):
-#     if student_id not in students:
-#         return {"Error": "Student does not exist"}
-
-#     del students[student_id]
-#     return {"Message": " Student deleted successfully"}
+@app.post("/airports/{airport_id}",response_model = Airport,status_code = 204)
+async def edit_airport(airport_id,nombre):
+    conn = engine.connect()
+    stmt = airports.update().values(name = nombre).where(airports.c.id == airport_id)
+    conn.execute(stmt)

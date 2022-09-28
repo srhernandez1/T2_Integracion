@@ -12,6 +12,7 @@ mccabe==0.6.1
 psycopg2==2.9.3
 pydantic==1.6.2
 pylint==2.4.4
+requests==2.22.0
 six==1.14.0
 SQLAlchemy==1.4.25
 starlette==0.14.2

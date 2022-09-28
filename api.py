@@ -65,6 +65,11 @@ async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
 
+@app.get("/flights/",response_model = List[Flight])
+async def get_flights():
+    query = flights.select()
+    return await database.fetch_all(query)
+
 @app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)

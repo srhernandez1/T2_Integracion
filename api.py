@@ -101,7 +101,7 @@ async def get_airports(airport_id):
 @app.post("/airports",response_model = List[Airport])
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
-        print(field)
+        print(airport.field)
     if airport.name == None:
         raise HTTPException(status_code=400, detail="Falto el name")
     print("El nombre es ",airport.name)

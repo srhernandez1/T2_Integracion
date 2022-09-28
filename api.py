@@ -79,8 +79,10 @@ async def get_status():
     return {"name": "204"}
 @app.delete("/data")
 async def delete_db():
-    airports.delete()
-    flights.delete()
+    stmt = airports.delete()
+    database.execute(stmt)
+    stmt_2 = flights.delete()
+    database.execute(stmt_2)
     return
 
 #Manejar errores y hacer las weas q faltan.

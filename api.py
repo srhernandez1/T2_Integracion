@@ -99,7 +99,8 @@ async def get_airports(airport_id):
 
 
 @app.post("/airports",response_model = List[Airport])
-async def create_airports(airport: Airport):
+async def create_airports(airport):
+    print("El objeto es: "+airport)
     print("El nombre es ",airport.name)
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)

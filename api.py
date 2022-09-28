@@ -111,8 +111,11 @@ async def get_airports(flight_id):
     query = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     err = await database.fetch_one(query_err)
-    if err ==None:
-        raise HTTPException(status_code=404, detail="Flight with id "+str(flight_id)+" not found")
+    if err == None:
+        return JSONResponse(
+            status_code=404,
+            content="Flight with id "+str(flight_id)+" not found",
+        )
     return await database.fetch_one(query)
 
 

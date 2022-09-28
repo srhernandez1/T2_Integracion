@@ -132,8 +132,13 @@ async def create_airports(airport: Airport_in):
     for field in airport.__fields__:
         if not isinstance(getattr(airport,field),str) and field!="position":
             return JSONResponse(
-            status_code=455,
-            content=jsonable_encoder({"error":"Missing parameter "+field}),
+            status_code=400,
+            content=jsonable_encoder({"error":"Wrong parameters"}),
+        )
+        if not isinstance(getattr(airport,field),dict) and field=="position":
+            return JSONResponse(
+            status_code=400,
+            content=jsonable_encoder({"error":"Wrong parameters"}),
         )
         if getattr(airport,field) == None:
             return JSONResponse(

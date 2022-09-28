@@ -148,6 +148,7 @@ async def create_flight(flight: Flight_inp):
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])
     response = requests.get(link)
     dic = response.json()
+    print(dic,"HOLAAAAAA")
     
     query = flights.insert().values(id = flight.id,departure = {"id":dep.id,"name":dep.name},
     destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,

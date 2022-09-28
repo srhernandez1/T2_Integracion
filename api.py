@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Path
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse
 from typing import Optional,List
 from pydantic import BaseModel,BaseConfig
 import databases
@@ -71,7 +71,9 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.get("/status", response_class = Response)
+@app.post("/status")
+async def get_status():
+    return JSONResponse(status_code=204)
 
 @app.delete("/data")
 async def delete_db():

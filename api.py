@@ -129,7 +129,7 @@ async def get_airports(flight_id):
 
 
 @app.post("/airports",response_model = List[Airport],status_code = 201)
-async def create_airports(airport: Airport_in):
+async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
             return JSONResponse(

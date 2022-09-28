@@ -208,9 +208,10 @@ async def create_flight(flight: Flight_inp):
 
 @app.put("/airports/{airport_id}",response_model = Airport)
 async def edit_airport(airport_id,nombre):
+    print(type(nombre))
     conn = engine.connect()
-    stmt = airports.update().values(name = nombre).where(airports.c.id == airport_id)
-    corr = await conn.execute(stmt)
+    stmt = airports.update().values(name = nombre.name).where(airports.c.id == airport_id)
+    corr = conn.execute(stmt)
     return JSONResponse(
             status_code=204,
         )

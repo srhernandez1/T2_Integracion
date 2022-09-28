@@ -79,8 +79,8 @@ async def get_status():
     return {"name": "204"}
 @app.delete("/data")
 async def delete_db():
-    airports.drop(engine)
-    flights.drop(engine)
+    database.execute(airports.delete())
+    database.execute(flights.delete())
     return
 
 #Manejar errores y hacer las weas q faltan.
@@ -110,7 +110,6 @@ async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
-
 @app.post("/flights",response_model = Flight)
 async def create_flight(flight: Flight_inp):
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)

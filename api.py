@@ -78,7 +78,7 @@ async def status():
 async def delete_db():
     database.execute(airports.delete())
     database.execute(flights.delete())
-    return {}
+    return
 
 
 @app.get("/airports",response_model = List[Airport])

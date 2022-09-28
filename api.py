@@ -3,12 +3,15 @@ from typing import Optional,List
 from pydantic import BaseModel,BaseConfig
 import databases
 import sqlalchemy
+import requests
+import json
 
 BaseConfig.arbitrary_types_allowed = True  # change #1
 
 database_url = "postgresql://rsxmhaipetxgsy:6c3eca151f1bf454f58b6a833f9b96b6766365baa97868b9964d8adf60fc6281@ec2-54-91-223-99.compute-1.amazonaws.com:5432/d69ei6qdr31e4i"
 database = databases.Database(database_url)
 metadata = sqlalchemy.MetaData()
+
 
 airports = sqlalchemy.Table(
     "airports",
@@ -24,8 +27,12 @@ flights = sqlalchemy.Table(
     "flights",
     metadata,
     sqlalchemy.Column("id",sqlalchemy.String, primary_key = True),
-    sqlalchemy.Column("departure",sqlalchemy.String),
-    sqlalchemy.Column("destination",sqlalchemy.String),
+    sqlalchemy.Column("departure",sqlalchemy.JSON),
+    sqlalchemy.Column("destination",sqlalchemy.JSON),
+    sqlalchemy.Column("total_distance",sqlalchemy.Float),
+    sqlalchemy.Column("traveled_distance",sqlalchemy.Float),
+    sqlalchemy.Column("bearing",sqlalchemy.Float),
+    sqlalchemy.Column("position",sqlalchemy.JSON),
 )
 
 engine = sqlalchemy.create_engine(
@@ -42,16 +49,23 @@ class Airport(BaseModel):
     city: str
     position: dict
 
-class Flight(BaseModel):
+class Flight_inp(BaseModel):
     id: str
     departure: str
     destination: str
 
+class Flight(BaseModel):
+    id: str
+    departure: dict
+    destination: dict
+    total_distance: float
+    traveled_distance: float
+    bearing: float
+    position: dict
+
 @app.on_event("startup")
 async def startup():
     await database.connect()
-
-
 @app.on_event("shutdown")
 async def startup():
     await database.disconnect()
@@ -64,26 +78,35 @@ def index():
 async def get_airports():
     query = airports.select()
     return await database.fetch_all(query)
-
 @app.get("/flights/",response_model = List[Flight])
 async def get_flights():
     query = flights.select()
     return await database.fetch_all(query)
-
 @app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
     return await database.fetch_one(query)
+
 
 @app.post("/airports/",response_model = Airport)
 async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
-
 @app.post("/flights/",response_model = Flight)
-async def create_flight(flight: Flight):
-    query = flights.insert().values(id = flight.id,departure = flight.departure, destination = flight.destination)
+async def create_flight(flight: Flight_inp):
+    query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)
+    dep = await database.fetch_one(query_dep)
+    query_des = sqlalchemy.select(airports).where(airports.c.id == flight.destination)
+    des = await database.fetch_one(query_des)
+
+    link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={uno},{dos}&final={tres},{cuatro}".fomrat(uno = dep.position["lat"],dos = dep.position["long"],tres = des.position["lat"],cuatro = des.position["long"])
+    response = requests.get(link)
+    dic = json.load(response)
+    
+    query = flights.insert().values(id = flight.id,departure = {"id":dep.id,"name":dep.name},
+    destination = {"id":des.id,"name":des.name},total_distance = dic.distance,traveled_distance = 0,bearing = 0)
+
     last_id = await database.execute(query)
     return Flight(id = flight.id,departure = flight.departure, destination = flight.destination)
 

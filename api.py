@@ -102,8 +102,8 @@ async def get_airports(airport_id):
     err = await database.fetch_one(query_err)
     if err ==None:
         return JSONResponse(
-            status_code=400,
-            content="Ta malo",
+            status_code=404,
+            content="Airport with id "+str(airport_id)+" not found",
         )
     return await database.fetch_one(query)
 @app.get("/flights/{flight_id}",response_model = Flight)

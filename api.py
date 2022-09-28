@@ -70,9 +70,7 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.post("/status/")
-async def create_item():
-    return {}
+@app.get("/status/")
 
 @app.get("/")
 def index():

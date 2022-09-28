@@ -98,6 +98,10 @@ async def get_flights():
 @app.get("/airports/{airport_id}",response_model = Airport)
 async def get_airports(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
+    query_err = sqlalchemy.select(airports).where(airports.c.id == airport_id)
+    err = await database.fetch_one(query_err)
+    if err ==None:
+        raise HTTPException(status_code=404, detail="Airport with id "+str(airport_id)+" not found")
     return await database.fetch_one(query)
 
 
@@ -113,7 +117,7 @@ async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
-@app.post("/flights",response_model = Flight)
+@app.post("/flights",response_model = Flight,status_code = 201)
 async def create_flight(flight: Flight_inp):
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)
     dep = await database.fetch_one(query_dep)

@@ -70,11 +70,14 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.get("/status")
+@app.post("/status")
 
-@app.get("/")
-def index():
-    return {"name": "First Data"}
+@app.delete("/data")
+async def delete_db():
+    database.execute(airports.delete())
+    database.execute(flights.delete())
+
+
 
 @app.get("/airports",response_model = List[Airport])
 async def get_airports():
@@ -105,7 +108,6 @@ async def create_flight(flight: Flight_inp):
     dic_des=json.loads(des.position)
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])
     response = requests.get(link)
-    print(response.json(),"HOLAAAAAAAAAAA")
     dic = response.json()
     
     query = flights.insert().values(id = flight.id,departure = {"id":dep.id,"name":dep.name},

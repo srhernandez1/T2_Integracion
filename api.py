@@ -211,3 +211,4 @@ async def edit_airport(airport_id,nombre):
     conn = engine.connect()
     stmt = airports.update().values(name = nombre).where(airports.c.id == airport_id)
     conn.execute(stmt)
+    return{}

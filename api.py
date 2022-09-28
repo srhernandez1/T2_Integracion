@@ -130,13 +130,13 @@ async def get_airports(flight_id):
 
 @app.post("/airports",response_model = List[Airport],status_code = 201)
 async def create_airports(airport: Airport):
+    print(type(airport.position),airport.position)
     check_pos=json.loads(airport.position)
     if not check_pos:
         return JSONResponse(
             status_code=400,
             content=jsonable_encoder({"Invalid type of field position, got <class 'list'> expecting <class 'dict'>"}),
         )
-    print(check_pos,"HOLAAAAAAAAAAA")
     if not (-90<=check_pos["lat"]<=90):
         return JSONResponse(
             status_code=400,

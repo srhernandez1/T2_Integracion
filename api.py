@@ -164,8 +164,14 @@ async def create_airports(airport: Airport):
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
+
 @app.post("/flights",response_model = Flight,status_code = 201)
 async def create_flight(flight: Flight_inp):
+    if flight.departure == flight.destination:
+        return JSONResponse(
+            status_code=400,
+            content=jsonable_encoder({"error":"departure and destination airports cannot be equal"}),
+        )
     for field in flight.__fields__:
         if getattr(flight,field) == None:
             return JSONResponse(

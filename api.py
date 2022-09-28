@@ -51,9 +51,9 @@ class Airport(BaseModel):
     position: Union[dict,None] = None
 
 class Flight_inp(BaseModel):
-    id: str
-    departure: str
-    destination: str
+    id: Union[str,None] = None
+    departure: Union[str,None] = None
+    destination: Union[str,None] = None
 
 class Flight(BaseModel):
     id: str
@@ -139,6 +139,19 @@ async def create_airports(airport: Airport):
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
 @app.post("/flights",response_model = Flight,status_code = 201)
 async def create_flight(flight: Flight_inp):
+    for field in flight.__fields__:
+        if getattr(flight,field) == None:
+            return JSONResponse(
+            status_code=400,
+            content={"error":"Missing field "+field},
+        )
+    query_err = sqlalchemy.select(flights).where(flights.c.id == flight.id)
+    err = await database.fetch_one(query_err)
+    if err !=None and err.id == flight.id:
+        return JSONResponse(
+            status_code=409,
+            content={"error":"Flight with id "+str(err.id)+" already exists"},
+        )
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)
     dep = await database.fetch_one(query_dep)
     query_des = sqlalchemy.select(airports).where(airports.c.id == flight.destination)
@@ -148,7 +161,6 @@ async def create_flight(flight: Flight_inp):
     link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],dic_des["lat"],dic_des["long"])
     response = requests.get(link)
     dic = response.json()
-    print(dic,"HOLAAAAAA")
     
     query = flights.insert().values(id = flight.id,departure = {"id":dep.id,"name":dep.name},
     destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0,

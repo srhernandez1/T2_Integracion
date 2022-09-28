@@ -98,7 +98,7 @@ async def get_airports(airport_id):
     return await database.fetch_one(query)
 
 
-@app.post("/airports",response_model = List[Airport])
+@app.post("/airports",response_model = Airport,status_code=201)
 async def create_airports(airport: Airport):
     for field in airport.__fields__:
         if getattr(airport,field) == None:
@@ -107,9 +107,10 @@ async def create_airports(airport: Airport):
     err = await database.fetch_one(query_err)
     if err !=None and err.id == airport.id:
         raise HTTPException(status_code=409, detail="Airport with id "+str(err.id)+" already exists")
-    #query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
-    #last_id = await database.execute(query)
+    query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
+    last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
+
 @app.post("/flights",response_model = Flight)
 async def create_flight(flight: Flight_inp):
     query_dep = sqlalchemy.select(airports).where(airports.c.id == flight.departure)

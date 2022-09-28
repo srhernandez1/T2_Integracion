@@ -83,7 +83,7 @@ async def delete_db():
     database.execute(flights.delete())
     return
 
-
+#Manejar errores y hacer las weas q faltan.
 @app.get("/airports",response_model = List[Airport])
 async def get_airports():
     query = airports.select()
@@ -100,6 +100,7 @@ async def get_airports(airport_id):
 
 @app.post("/airports",response_model = Airport)
 async def create_airports(airport: Airport):
+    print("El nombre es ",airport.name)
     query = airports.insert().values(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)
     last_id = await database.execute(query)
     return Airport(id = airport.id,name = airport.name,country = airport.country,city = airport.city, position = airport.position)

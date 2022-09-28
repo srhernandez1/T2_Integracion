@@ -74,8 +74,8 @@ async def startup():
 @app.get("/")
 async def index():
     return {"Bienvenido":"T2"}
-@app.get("/",status_code = 204)
-async def create_item():
+@app.get("/status",status_code = 204)
+async def get_status():
     return {"name": "204"}
 @app.delete("/data")
 async def delete_db():

@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Path, HTTPException
+from fastapi import FastAPI, status,Request
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
 from typing import Optional,List,Union,Any
 from pydantic import BaseModel,BaseConfig
 import databases
@@ -44,13 +45,6 @@ metadata.create_all(engine)
 
 app = FastAPI()
 
-class Airport_in(BaseModel):
-    id: Any
-    name: Any
-    country: Any
-    city: Any
-    position: Any
-
 class Airport(BaseModel):
     id: Optional[str]
     name: Optional[str]
@@ -71,6 +65,13 @@ class Flight(BaseModel):
     traveled_distance: float
     bearing: float
     position: dict
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content=jsonable_encoder({"error": exc.errors()})
+    )
 
 @app.on_event("startup")
 async def startup():
@@ -134,16 +135,6 @@ async def create_airports(airport: Airport_in):
             return JSONResponse(
             status_code=400,
             content=jsonable_encoder({"error":"Missing parameter "+field}),
-        )
-        if not isinstance(getattr(airport,field),str) and field!="position":
-            return JSONResponse(
-            status_code=400,
-            content=jsonable_encoder({"error":"Wrong parameters"}),
-        )
-        if not isinstance(getattr(airport,field),dict) and field=="position":
-            return JSONResponse(
-            status_code=400,
-            content=jsonable_encoder({"error":"Wrong parameters"}),
         )
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)

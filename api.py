@@ -71,7 +71,7 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.get("/status", response_model = JSONResponse(status_code=204))
+@app.get("/status", response_class = Response)
 
 @app.delete("/data")
 async def delete_db():

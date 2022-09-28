@@ -70,7 +70,7 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-@app.get("status")
+@app.get("/status")
 async def status():
     return
 

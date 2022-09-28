@@ -44,15 +44,15 @@ metadata.create_all(engine)
 
 app = FastAPI()
 
-class Inputt(BaseModel):
+class Input(BaseModel):
     jeison:str
 
 class Airport(BaseModel):
-    id: Union[str,None] = None
-    name: Union[str,None] = None
-    country: Union[str,None] = None
-    city: Union[str,None] = None
-    position: Union[dict,None] = None
+    id: str
+    name: str
+    country: str
+    city: str
+    position: dict
 
 class Flight_inp(BaseModel):
     id: Union[str,None] = None
@@ -124,15 +124,13 @@ async def get_airports(flight_id):
 
 
 @app.post("/airports",response_model = Airport,status_code = 201)
-async def create_airports(airport_i: Inputt):
-    argum = json.loads(airport_i)
-    print(argum)
-    for field in airport.__fields__:
-        if getattr(airport,field) == None:
-            return JSONResponse(
-            status_code=400,
-            content=jsonable_encoder({"error":"Missing parameter "+field}),
-        )
+async def create_airports(airport: Airport):
+    # for field in airport.__fields__:
+    #     if getattr(airport,field) == None:
+    #         return JSONResponse(
+    #         status_code=400,
+    #         content=jsonable_encoder({"error":"Missing parameter "+field}),
+    #     )
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)
     if err !=None and err.id == airport.id:

@@ -110,7 +110,8 @@ async def create_flight(flight: Flight_inp):
     destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0)
 
     last_id = await database.execute(query)
-    return Flight(id = flight.id,departure = flight.departure, destination = flight.destination)
+    return Flight(id = flight.id,departure = {"id":dep.id,"name":dep.name},
+    destination = {"id":des.id,"name":des.name},total_distance = dic["distance"],traveled_distance = 0,bearing = 0)
 
 # @app.get("/get-airport/{airport_id}")
 # def get_airport(airport_id):

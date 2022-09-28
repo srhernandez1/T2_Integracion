@@ -122,7 +122,7 @@ async def create_airports(airport: Airport):
         if getattr(airport,field) == None:
             return JSONResponse(
             status_code=400,
-            content="Ta malo el "+field
+            content={"error":"Missing field "+field}
         )
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport.id)
     err = await database.fetch_one(query_err)

@@ -270,6 +270,19 @@ async def delete_airport(airport_id):
             status_code=404,
             content=jsonable_encoder({"error":"Airport with id "+str(airport_id)+" not found"}),
         )
+    query_fl = flights.select()
+    a = await database.fetch_all(query_fl)
+    for i in a:
+        if airport_id in i.departure:
+            return JSONResponse(
+            status_code=409,
+            content=jsonable_encoder({"error":"Airport "+str(airport_id)+" has flights in progress"}),
+        )
+        if airport_id in i.destination:
+            return JSONResponse(
+            status_code=409,
+            content=jsonable_encoder({"error":"Airport "+str(airport_id)+" has flights in progress"}),
+        )
     conn = engine.connect()
     stm = airports.delete().where(airports.c.id == airport_id)
     corr = conn.execute(stm)

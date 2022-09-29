@@ -260,7 +260,7 @@ async def edit_airport(flight_id,coord:Patch_Fl):
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)
 
-@app.delte("/airports/{airport_id}")
+@app.delete("/airports/{airport_id}")
 async def delete_airport(airport_id):
     query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
     query_err = sqlalchemy.select(airports).where(airports.c.id == airport_id)

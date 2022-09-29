@@ -249,6 +249,7 @@ async def edit_airport(flight_id,coord:Patch_Fl):
             content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
         )
     total = err.total_distance
+    print(err.destination,"HOLAAAAAAAAAAA")
     query_aer = sqlalchemy.select(airports).where(airports.c.id == err.destination)
     final_pos = await database.fetch_one(query_aer)
     dic_dep=json.loads(final_pos.position)

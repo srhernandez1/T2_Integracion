@@ -260,11 +260,20 @@ async def edit_airport(flight_id,coord:Patch_Fl):
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)
 
-# @app.post("/airports/{airport_id}"):
-# async def delete_airport(airport_id):
-#     conn = engine.connect()
-#     stm = airports.delete().where(airports.c.id == airport_id)
-#     corr = conn.execute(stm)
-#     return JSONResponse(
-#             status_code=204,
-#         )
+@app.delte("/airports/{airport_id}")
+async def delete_airport(airport_id):
+    conn = engine.connect()
+    stm = airports.delete().where(airports.c.id == airport_id)
+    corr = conn.execute(stm)
+    return JSONResponse(
+            status_code=204,
+        )
+
+@app.delete("/flights/{flight_id}")
+async def delete_flight(flight_id):
+    conn = engine.connect()
+    stm = flights.delete().where(flights.c.id == flight_id)
+    corr = conn.execute(stm)
+    return JSONResponse(
+            status_code=204,
+        )

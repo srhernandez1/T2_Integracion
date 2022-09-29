@@ -249,7 +249,15 @@ async def edit_airport(flight_id,coord:Patch_Fl):
             content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
         )
     total = err.total_distance
+    query_aer = sqlalchemy.select(airports).where(airports.c.id == err.destination)
+    final_pos = await database.fetch_one(query_aer)
+    dic_dep=json.loads(final_pos.position)
+
+    link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(coord.lat,coord.long,final_pos,dic_dep["lat"],dic_dep["long"])
+    response = requests.get(link)
+    dic = response.json()
+
     conn = engine.connect()
-    stmt = flights.update().values(position = {"lat":coord.lat,"long":coord.long,},bearing=180).where(flights.c.id == flight_id)
+    stmt = flights.update().values(traveled_distance = int(total)-int(dic["distance"]),bearing=dic["bearing"],position = {"lat":coord.lat,"long":coord.long,}).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)

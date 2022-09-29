@@ -239,7 +239,7 @@ async def edit_airport(airport_id,nombre:Patch_In):
             status_code=204,
         )
 
-@app.patch("/flights/{flight_id}/position")
+@app.post("/flights/{flight_id}/position")
 async def edit_airport(flight_id,coord:Patch_Fl):
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     err = await database.fetch_one(query_err)

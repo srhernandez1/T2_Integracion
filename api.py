@@ -250,7 +250,7 @@ async def edit_airport(flight_id,coord:Patch_Fl):
         )
     total = err.total_distance
     print(err.destination,"HOLAAAAAAAAAAA")
-    query_aer = sqlalchemy.select(airports).where(airports.c.id == err.destination)
+    query_aer = sqlalchemy.select(airports).where(airports.c.id == err.destination.id)
     final_pos = await database.fetch_one(query_aer)
     dic_dep=json.loads(final_pos.position)
 

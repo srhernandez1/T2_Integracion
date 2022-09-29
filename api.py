@@ -262,6 +262,14 @@ async def edit_airport(flight_id,coord:Patch_Fl):
 
 @app.delte("/airports/{airport_id}")
 async def delete_airport(airport_id):
+    query = sqlalchemy.select(airports).where(airports.c.id == airport_id)
+    query_err = sqlalchemy.select(airports).where(airports.c.id == airport_id)
+    err = await database.fetch_one(query_err)
+    if err ==None:
+        return JSONResponse(
+            status_code=404,
+            content=jsonable_encoder({"error":"Airport with id "+str(airport_id)+" not found"}),
+        )
     conn = engine.connect()
     stm = airports.delete().where(airports.c.id == airport_id)
     corr = conn.execute(stm)
@@ -271,6 +279,13 @@ async def delete_airport(airport_id):
 
 @app.delete("/flights/{flight_id}")
 async def delete_flight(flight_id):
+    query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
+    err = await database.fetch_one(query_err)
+    if err ==None:
+        return JSONResponse(
+            status_code=404,
+            content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
+        )
     conn = engine.connect()
     stm = flights.delete().where(flights.c.id == flight_id)
     corr = conn.execute(stm)

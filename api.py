@@ -261,8 +261,19 @@ async def edit_airport(flight_id,coord:Patch_Fl):
     bear_var = dic["bearing"]
     if int(total)-int(dic["distance"]) == 0:
         bear_var=180
+    elif dic["bearing"] == 180:
+        bear_var = dic["bearing"]
 
     conn = engine.connect()
     stmt = flights.update().values(traveled_distance = int(total)-int(dic["distance"]),bearing=bear_var,position = {"lat":coord.lat,"long":coord.long,}).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)
+
+# @app.post("/airports/{airport_id}"):
+# async def delete_airport(airport_id):
+#     conn = engine.connect()
+#     stm = airports.delete().where(airports.c.id == airport_id)
+#     corr = conn.execute(stm)
+#     return JSONResponse(
+#             status_code=204,
+#         )

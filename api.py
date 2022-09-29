@@ -143,6 +143,11 @@ async def create_airports(airport: Airport):
             content=jsonable_encoder({"error":"Missing parameter "+field}),
         )
     check_pos = airport.position
+    if "lat" not in check_pos or "long" not in check_pos:
+        return JSONResponse(
+            status_code=400,
+            content=jsonable_encoder({"error":"Lat or long missing"}),
+        )
     if not check_pos:
         return JSONResponse(
             status_code=400,
@@ -234,7 +239,7 @@ async def edit_airport(airport_id,nombre:Patch_In):
             status_code=204,
         )
 
-@app.patch("/flights/{flight_id}")
+@app.patch("/flights/{flight_id}/position")
 async def edit_airport(flight_id,coord:Patch_Fl):
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     err = await database.fetch_one(query_err)

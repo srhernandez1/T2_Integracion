@@ -47,6 +47,10 @@ app = FastAPI()
 class Patch_In(BaseModel):
     name: str
 
+class Patch_Fl(BaseModel):
+    lat: float
+    long: float
+
 class Airport(BaseModel):
     id: Optional[str]
     name: Optional[str]
@@ -225,6 +229,22 @@ async def edit_airport(airport_id,nombre:Patch_In):
         )
     conn = engine.connect()
     stmt = airports.update().values(name = nombre.name).where(airports.c.id == airport_id)
+    corr = conn.execute(stmt)
+    return JSONResponse(
+            status_code=204,
+        )
+
+@app.patch("/flights/{flight_id}")
+async def edit_airport(flight_id,coord:Patch_Fl):
+    query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
+    err = await database.fetch_one(query_err)
+    if err ==None:
+        return JSONResponse(
+            status_code=404,
+            content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
+        )
+    conn = engine.connect()
+    stmt = flights.update().values(position = {"lat":coord.lat,"long":coord.long}).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
     return JSONResponse(
             status_code=204,

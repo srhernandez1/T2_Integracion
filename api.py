@@ -248,9 +248,8 @@ async def edit_airport(flight_id,coord:Patch_Fl):
             status_code=404,
             content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
         )
+    total = err.total_distance
     conn = engine.connect()
     stmt = flights.update().values(position = {"lat":coord.lat,"long":coord.long}).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
-    return JSONResponse(
-            status_code=204,
-        )
+    return await database.fetch_one(query_err)

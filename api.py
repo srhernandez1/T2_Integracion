@@ -243,29 +243,20 @@ async def edit_airport(airport_id,nombre:Patch_In):
 async def edit_airport(flight_id,coord:Patch_Fl):
     query_err = sqlalchemy.select(flights).where(flights.c.id == flight_id)
     err = await database.fetch_one(query_err)
+    dic_dep=json.loads(err.position)
     if err ==None:
         return JSONResponse(
             status_code=404,
             content=jsonable_encoder({"error":"Flight with id "+str(flight_id)+" not found"}),
         )
-    total = err.total_distance
-    coord_fin = json.loads(err.destination)
-    query_aer = sqlalchemy.select(airports).where(airports.c.id == coord_fin["id"])
-    final_pos = await database.fetch_one(query_aer)
-    dic_dep=json.loads(final_pos.position)
+    total = float(err.traveled_distance)
 
-    link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(coord.lat,coord.long,dic_dep["lat"],dic_dep["long"])
+    link = "https://tarea-2.2022-2.tallerdeintegracion.cl/distance?initial={0},{1}&final={2},{3}".format(dic_dep["lat"],dic_dep["long"],coord.lat,coord.long)
     response = requests.get(link)
     dic = response.json()
 
-    bear_var = dic["bearing"]
-    if int(total)-int(dic["distance"]) == 0:
-        bear_var=180
-    elif dic["bearing"] == 180:
-        bear_var = dic["bearing"]
-
     conn = engine.connect()
-    stmt = flights.update().values(traveled_distance = int(total)-int(dic["distance"]),bearing=bear_var,position = {"lat":coord.lat,"long":coord.long,}).where(flights.c.id == flight_id)
+    stmt = flights.update().values(traveled_distance = total+float(dic["distance"]),bearing=dic["bearing"],position = {"lat":coord.lat,"long":coord.long,}).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)
 

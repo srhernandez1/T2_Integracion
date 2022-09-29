@@ -250,6 +250,6 @@ async def edit_airport(flight_id,coord:Patch_Fl):
         )
     total = err.total_distance
     conn = engine.connect()
-    stmt = flights.update().values(position = {"lat":coord.lat,"long":coord.long}).where(flights.c.id == flight_id)
+    stmt = flights.update().values(position = {"lat":coord.lat,"long":coord.long,},bearing=180).where(flights.c.id == flight_id)
     corr = conn.execute(stmt)
     return await database.fetch_one(query_err)
